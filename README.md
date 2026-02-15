@@ -67,6 +67,7 @@ Course: Project Based Learning
 Institution: Manipal University Jaipur
 
 🌟 Future Work
+
 Integrate wearable sensor data
 
 Multi-patient dataset analysis
