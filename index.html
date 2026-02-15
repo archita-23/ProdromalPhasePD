@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkinson's Prodromal Detection | PBL</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <p class="main-logo">PBL for DEPT. OF COMPUTER SCIENCE & ENGINEERING</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#problem">PROBLEM</a></li>
+                <li><a href="#methodology">METHODOLOGY</a></li>
+                <li><a href="#results">RESULTS</a></li>
+                <li><a href="#team">TEAM</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="badge">ID: 2427030114</div>
+        <h1 class="gradient-text">Prodromal Phase Detection for </h1>
+        <h1 class="gradient-text">Parkinson's Disease</h1>
+        <div class="tagline-container">
+            <p class="tagline">"A data-driven system that detects early abnormal health patterns during the prodromal phase of neurological diseases, especially Parkinson’s disease, using longitudinal behavioral data and unsupervised anomaly detection."</p>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section id="problem" class="section-block">
+            <a href="literature.html" class="card-link">
+                <div class="main-card blue-glow">
+                    <h2>01. Problem Statement</h2>
+                    <p>Neurological diseases like Parkinson’s are usually diagnosed only after visible motor symptoms appear, by which time significant neuron damage has already occurred. Early prodromal symptoms such as sleep changes, mood variation, and fatigue are subtle and rarely analyzed together. Click to view Literature Review.</p>
+                </div>
+            </a>
+        </section>
+
+        
+        <section class="horizontal-grid">
+            <div id="methodology" class="card methodology-card">
+                <h4>02. METHODOLOGY</h4>
+                <h2>Technical Approach</h2>
+                <p>The system collects longitudinal behavioral data such as sleep duration, mood variation, activity level, and fatigue. After preprocessing and normalization, relevant features are extracted to represent daily behavioral patterns. An unsupervised anomaly detection model (Isolation Forest) learns the user’s normal baseline behavior and continuously evaluates new data. When multiple parameters deviate simultaneously beyond normal variation, the system flags a potential risk window. The output is presented through visual trends and anomaly indicators for early awareness. </p>
+                <br><p>Methodology Steps:</p>
+                <p>-Data collection (simulated or recorded daily behavioral parameters)</p>
+
+                <p>- Data preprocessing and normalization</p>
+ 
+                <p>- Feature selection and time-series trend analysis</p>
+
+                <p>- Training unsupervised anomaly detection model</p>
+
+                <p>- Detecting multi-parameter deviations</p>
+
+                <p>- Generating risk flags (non-diagnostic)</p>
+
+                <p>- Visualizing behavioral patterns and anomalies</p>
+            </div>
+
+            
+
+            <div id="tech stack" class="card tech stack-card">
+                <h4>03. TECHNICAL STACK</h4>
+                <h2>System Architecture</h2>
+                <p>The system is built using Python and JavaScript. The backend uses scikit-learn for anomaly detection and pandas for data processing. The frontend is developed with HTML, CSS, and JavaScript to visualize behavioral trends and anomalies. Data is stored in a local database for persistence across sessions.</p>
+                <br><p>Key Technologies:</p>
+                <p>- Python </p>
+                <p>- Data Processing: Pandas, NumPy</p>
+                <p>- Machine Learning: Scikit-learn (Random Forest, SVM)</p>
+                <p>- Time-Series Analysis: Statistical trend detection</p>
+                <p>- Visualization: Matplotlib, Plotly, Streamlit</p>
+
+                
+            </div>
+            <div id="results" class="card results-card">
+                <h4>04. RESULTS</h4>
+                <h2>Expected Outcomes</h2>
+                <p>The system successfully learned normal behavioral patterns and detected periods where multiple parameters showed abnormal deviation. The anomaly detection model identified a continuous risk window corresponding to gradual behavioral drift rather than isolated fluctuations. Visual outputs highlighted these deviations clearly, demonstrating that longitudinal pattern monitoring can reveal early abnormal trends. The results confirm that combining multiple subtle changes is more effective than observing single parameters for early risk awareness.</p>
+                <br><p>Key Results:</p>
+                <p>- Model established a personal normal baseline</p>
+
+                <p>- Detected sustained abnormal behavior period</p>
+
+                <p>- Reduced false alerts from single-parameter changes</p>
+
+                <p>- Identified multi-signal deviation patterns</p>
+
+                <p>- Visual graphs clearly showed risk windows</p>
+
+                <p>- Demonstrated feasibility of early non-diagnostic monitoring</p>
+            </div>
+
+            <div id="ethical considerations" class="card ethical considerations-card">
+                <h4>05. ETHICAL CONSIDERATIONS</h4>
+                <h2>Privacy and Data Handling</h2>
+                <p>System does not provide medical diagnosis.</p>
+                <br><p>- Results are for educational and research purposes only.</p>
+                <p>- Uses anonymized or simulated data.</p>
+                <p>- Avoids alarming predictions and ensures responsible reporting.</p>
+                <p>- Non-diagnostic output presentation</p>
+            </div>
+
+        </section>
+
+        <section id="team" class="team-section">
+            <h2 class="section-title">The Research Team</h2>
+            <div class="team-grid">
+                
+                
+                <div class="team-card">
+                    <div class="member-photo"></div>
+                    <h3>Dr. Ajay Kumar</h3>
+                    <p>PBL Guide</p>
+                </div>
+                <div class="team-card">
+                    <div class="member-photo"></div>
+                    <h3>Archita Gupta</h3>
+                    <p>2427030114</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 RESEARCH PORTFOLIO | DEPT. OF CSE</p>
+    </footer>
+
+</body>
+</html>
