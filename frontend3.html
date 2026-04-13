@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodromal Phase Detection</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- Axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .navbar {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        .sidebar {
+            background-color: #1e3a5f;
+            color: white;
+            min-height: calc(100vh - 56px);
+            padding: 20px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: transparent;
+            border: 1px solid #64748b;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .sidebar button:hover,
+        .sidebar button.active {
+            background-color: #3B82F6;
+            border-color: #3B82F6;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .table-responsive {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            font-size: 14px;
+        }
+
+        .badge-high {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-medium {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-low {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-normal {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+
+        .badge-anomaly {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .alert {
+            border-radius: 4px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #1e3a5f;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: #3B82F6;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3B82F6;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1 style="margin: 0; color: white;">Prodromal Phase Detection</h1>
+    </nav>
+
+    <div style="display: flex; min-height: calc(100vh - 56px);">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button class="active" onclick="showSection('users')">Users</button>
+            <button onclick="showSection('new-reading')">New Reading</button>
+            <button onclick="showSection('view-readings')">View Readings</button>
+            <button onclick="showSection('output-graph')">Output Graph</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" style="flex: 1;">
+            <!-- USERS SECTION -->
+            <section id="users" class="section active">
+                <h2>User Management</h2>
+                
+                <div class="card">
+                    <button class="btn btn-primary" onclick="showAddUserForm()">Add New User</button>
+                </div>
+
+                <div id="addUserForm" style="display: none; margin-bottom: 20px;">
+                    <div class="card">
+                        <div style="padding: 20px;">
+                            <h4>Add New User</h4>
+                            <form onsubmit="handleAddUser(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Name *</label>
+                                    <input type="text" class="form-control" id="userName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="userEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="userAge">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add User</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideAddUserForm()">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Age</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- NEW READING SECTION -->
+            <section id="new-reading" class="section">
+                <h2>Record New Health Reading</h2>
+                
+                <div class="card">
+                    <div style="padding: 20px; max-width: 600px;">
+                        <form onsubmit="handleAddReading(event)">
+                            <div class="mb-3">
+                                <label class="form-label">Select User *</label>
+                                <select class="form-select" id="readingUserId" required>
+                                    <option value="">-- Select a user --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mood (1-10) *</label>
+                                <input type="range" class="form-range" id="readingMood" min="1" max="10" value="5" onchange="updateMoodValue(this.value)">
+                                <small id="moodValue">5/10</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Fatigue (1-10) *</label>
+                                <input type="range" class="form-range" id="readingFatigue" min="1" max="10" value="5" onchange="updateFatigueValue(this.value)">
+                                <small id="fatigueValue">5/10</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Sleep Hours *</label>
+                                <input type="number" class="form-control" id="readingSleepHours" min="0" max="24" step="0.5" placeholder="7.5" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tremor Presence *</label>
+                                <div>
+                                    <input type="radio" name="tremor" value="0" checked> No &nbsp;&nbsp;
+                                    <input type="radio" name="tremor" value="1"> Yes
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Sleep Quality (1-10) *</label>
+                                <input type="range" class="form-range" id="readingSleepQuality" min="1" max="10" value="5" onchange="updateSleepQualityValue(this.value)">
+                                <small id="sleepQualityValue">5/10</small>
+                            </div>
+
+                            <div id="predictionResult" style="display: none; margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 4px;">
+                                <h5>Prediction Result</h5>
+                                <p><strong>Risk Score:</strong> <span id="resultRiskScore">-</span></p>
+                                <p><strong>Risk Level:</strong> <span id="resultRiskLevel" class="badge">-</span></p>
+                                <p><strong>Anomaly Detected:</strong> <span id="resultAnomaly">-</span></p>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Record Reading</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW READINGS SECTION -->
+            <section id="view-readings" class="section">
+                <h2>View Health Readings</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="margin-right: 10px;">Filter by User:</label>
+                    <select class="form-select" id="filterUserId" onchange="loadReadings()" style="max-width: 300px; display: inline-block;">
+                        <option value="">All Users</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Mood</th>
+                                <th>Fatigue</th>
+                                <th>Sleep Hours</th>
+                                <th>Tremor</th>
+                                <th>Risk Score</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="readingsTable">
+                            <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- OUTPUT GRAPH SECTION -->
+            <section id="output-graph" class="section">
+                <h2>Output Graphs</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="margin-right: 10px;">Select User for Graph:</label>
+                    <select class="form-select" id="graphUserId" onchange="generateGraph()" style="max-width: 300px; display: inline-block;">
+                        <option value="">Select a user to view graphs</option>
+                    </select>
+                </div>
+
+                <div class="chart-container" style="display: none;" id="graphContainer">
+                    <h4>Mood Trend</h4>
+                    <div style="position: relative; height: 400px; margin-bottom: 40px;">
+                        <canvas id="moodChart"></canvas>
+                    </div>
+
+                    <h4>Fatigue Trend</h4>
+                    <div style="position: relative; height: 400px; margin-bottom: 40px;">
+                        <canvas id="fatigueChart"></canvas>
+                    </div>
+
+                    <h4>Sleep Hours Trend</h4>
+                    <div style="position: relative; height: 400px; margin-bottom: 40px;">
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+
+                    <h4>Risk Score Trend</h4>
+                    <div style="position: relative; height: 400px;">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        let charts = {};
+
+        // Show/Hide Sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Load data
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'view-readings') loadReadings();
+            if (sectionId === 'output-graph') loadGraphUsers();
+        }
+
+        // API Call
+        async function apiCall(endpoint, method = 'GET', data = null) {
+    try {
+        const config = {
+            method: method,
+            url: `${API_BASE_URL}${endpoint}`,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        if (data) config.data = data;
+
+        const response = await axios(config);
+        return response.data;
+    } catch (error) {
+        alert('Error: ' + (error.response?.data?.message || error.message));
+        throw error;
+    }
+}
+
+        // Format Date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        // Get Risk Badge Class
+        function getRiskBadgeClass(riskScore) {
+            if (riskScore > 0.7) return 'badge-high';
+            if (riskScore > 0.4) return 'badge-medium';
+            return 'badge-low';
+        }
+
+        function getRiskLevelText(riskScore) {
+            if (riskScore > 0.7) return 'HIGH';
+            if (riskScore > 0.4) return 'MEDIUM';
+            return 'LOW';
+        }
+
+        // ===== USERS SECTION =====
+
+        function showAddUserForm() {
+            document.getElementById('addUserForm').style.display = 'block';
+        }
+
+        function hideAddUserForm() {
+            document.getElementById('addUserForm').style.display = 'none';
+            document.querySelector('#addUserForm form').reset();
+        }
+        async function handleAddUser(event) {
+        event.preventDefault();
+
+        const data = {
+            name: document.getElementById('userName').value,
+            email: document.getElementById('userEmail').value,
+            age: document.getElementById('userAge').value
+        };
+
+        try {
+            const response = await apiCall('/users', 'POST', data);
+
+            if (response.error) {
+                alert("Error: " + response.error);
+            return;
+            }
+
+            alert("User added successfully!");
+
+        // reset form + hide
+            document.querySelector('#addUserForm form').reset();
+            hideAddUserForm();
+
+        // 🔥 IMPORTANT: reload users
+            loadUsers();
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+        async function handleAddReading(event) {
+            event.preventDefault();
+
+            const tremor = document.querySelector('input[name="tremor"]:checked').value;
+
+            const payload = {
+                user_id: document.getElementById('readingUserId').value,
+                sleep_hours: parseFloat(document.getElementById('readingSleepHours').value),
+                tremor: parseInt(tremor),
+                fatigue_level: parseInt(document.getElementById('readingFatigue').value),
+                mood_score: parseInt(document.getElementById('readingMood').value)
+            };
+
+        try {
+            const response = await apiCall('/predict', 'POST', payload);
+
+            document.getElementById('resultRiskScore').textContent = "-";
+            document.getElementById('resultRiskLevel').textContent = response.prediction;
+            document.getElementById('resultAnomaly').textContent =
+            response.prediction === "Anomaly" ? "YES - Anomaly" : "NO - Normal";
+
+            document.getElementById('predictionResult').style.display = 'block';
+
+            alert('Reading recorded successfully!');
+            event.target.reset();
+
+        } catch (error) {
+            console.error(error);
+        }
+}
+        async function loadUsers() {
+            try {
+            const response = await apiCall('/users');
+
+            const userList = response.data;  // ✅ FIX
+
+            let table = document.getElementById('usersTable');
+
+            if (userList.length === 0) {
+                table.innerHTML = '<tr><td colspan="5" class="text-center">No users found</td></tr>';
+            } else {
+                table.innerHTML = userList.map(user => `
+                    <tr>
+                        <td>${user.u_id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.age || '-'}</td>
+                        <td>${user.created_at}</td>
+                    </tr>
+                `).join('');
+            }
+
+            const options = userList.map(u => `<option value="${u.u_id}">${u.name}</option>`).join('');
+
+            document.getElementById('readingUserId').innerHTML = '<option value="">-- Select --</option>' + options;
+            document.getElementById('filterUserId').innerHTML = '<option value="">All Users</option>' + options;
+            document.getElementById('graphUserId').innerHTML = '<option value="">Select a user</option>' + options;
+
+        } catch (error) {
+            console.error(error);
+        }
+}
+        // ===== NEW READING SECTION =====
+
+        function updateMoodValue(value) {
+            document.getElementById('moodValue').textContent = value + '/10';
+        }
+
+        function updateFatigueValue(value) {
+            document.getElementById('fatigueValue').textContent = value + '/10';
+        }
+
+        function updateSleepQualityValue(value) {
+            document.getElementById('sleepQualityValue').textContent = value + '/10';
+        }
+
+        
+
+        // ===== VIEW READINGS SECTION =====
+
+        async function loadReadings() {
+    try {
+        const userId = document.getElementById('filterUserId').value;
+
+        if (!userId) {
+            document.getElementById('readingsTable').innerHTML =
+                '<tr><td colspan="8" class="text-center">Select a user</td></tr>';
+            return;
+        }
+
+        const readings = await apiCall(`/history/${userId}`);
+
+        let table = document.getElementById('readingsTable');
+
+        if (readings.length === 0) {
+            table.innerHTML = '<tr><td colspan="8" class="text-center">No readings found</td></tr>';
+        } else {
+            table.innerHTML = readings.map(r => `
+                <tr>
+                    <td>${userId}</td>
+                    <td>${formatDate(r.timestamp)}</td>
+                    <td>${r.mood_score}</td>
+                    <td>${r.fatigue_level}</td>
+                    <td>${r.sleep_hours}</td>
+                    <td>${r.tremor ? 'Yes' : 'No'}</td>
+                    <td>-</td>
+                    <td>${r.prediction}</td>
+                </tr>
+`           ).join('');
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+        // ===== OUTPUT GRAPH SECTION =====
+
+        async function loadGraphUsers() {
+            try {
+                const response = await apiCall('/users');
+                const users = response.data;
+                const options = users.map(u => `<option value="${u.u_id}">${u.name}</option>`).join('');
+                document.getElementById('graphUserId').innerHTML = '<option value="">Select a user</option>' + options;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function generateGraph() {
+            const userId = document.getElementById('graphUserId').value;
+            if (!userId) return;
+
+            try {
+                const readings = await apiCall(`/history/${userId}`);
+
+                if (readings.length === 0) {
+                    alert('No readings for this user');
+                return;
+            }
+
+            document.getElementById('graphContainer').style.display = 'block';
+
+            const dates = readings.map(r =>
+                new Date(r.timestamp).toLocaleDateString()
+            );
+
+            const moods = readings.map(r => r.mood_score);
+            const fatigues = readings.map(r => r.fatigue_level);
+            const sleeps = readings.map(r => r.sleep_hours);
+
+        // convert prediction to numeric (for graph)
+            const risks = readings.map(r => r.prediction === "Anomaly" ? 1 : 0);
+
+            createChart('moodChart', 'line', dates, moods, 'Mood');
+            createChart('fatigueChart', 'line', dates, fatigues, 'Fatigue');
+            createChart('sleepChart', 'line', dates, sleeps, 'Sleep Hours');
+            createChart('riskChart', 'line', dates, risks, 'Risk (0=Normal,1=Anomaly)');
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+        function createChart(canvasId, type, labels, data, label) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+
+            if (charts[canvasId]) charts[canvasId].destroy();
+
+            charts[canvasId] = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers();
+        });
+    </script>
+</body>
+</html>
