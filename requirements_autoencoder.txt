@@ -1,0 +1,11 @@
+# Extra packages for the Autoencoder add-on (keep your existing ones too).
+# TensorFlow needs Python 3.9 - 3.12 (check with: python --version)
+tensorflow>=2.16
+scikit-learn
+pandas
+numpy
+matplotlib
+joblib
+openpyxl
+streamlit
+plotly

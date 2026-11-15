@@ -1,0 +1,27 @@
+# Python
+venv/
+venv1/
+__pycache__/
+*.pyc
+
+# Environment and configuration
+.env
+config.toml
+
+# Databases
+*.db
+
+# Raw and processed PPMI data
+MDS_UPDRS_Part_I.csv
+MDS_UPDRS_Part_III.csv
+Motor___MDS-UPDRS/
+participant_cohort.csv
+ppmi_processed.csv
+ppmi_ae_features.csv
+ppmi_ae_features_labeled.csv
+autoencoder_predictions.csv
+ae_patient_splits.csv
+
+# Temporary files
+app_changes.diff
+.DS_Store

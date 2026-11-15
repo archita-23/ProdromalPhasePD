@@ -1,0 +1,14 @@
+{
+    "feature_columns": [
+        "cognition",
+        "hallucinations",
+        "mood",
+        "apathy",
+        "tremor"
+    ],
+    "threshold": 0.012670796140277765,
+    "threshold_percentile": 95,
+    "training_type": "unsupervised",
+    "training_visits": 24371,
+    "validation_visits": 6236
+}
